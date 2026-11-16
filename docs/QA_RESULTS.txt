@@ -1,0 +1,40 @@
+desktop | pattern count | PASS | 19
+desktop | open pattern dialog | PASS | True
+desktop | one line log css | PASS | 32px
+desktop | NIBP 2 sec cycle | PASS | MANUAL
+desktop | history modal | PASS | True
+desktop | lab timer tab | PASS | True
+desktop | scenario view tabs | PASS | True
+desktop | impact view tabs | PASS | True
+desktop | architecture module details | PASS | True
+desktop | settings update | PASS | 110
+desktop | settings load after fresh boot | PASS | ocean
+desktop | horizontal overflow | PASS | 1380
+desktop | no JS page errors | PASS | True
+mobile | pattern count | PASS | 19
+mobile | two mobile inline accordions | PASS | 2
+mobile | one line log css | PASS | 32px
+mobile | NIBP 2 sec cycle | PASS | MANUAL
+mobile | history modal | PASS | True
+mobile | lab timer tab | PASS | True
+mobile | scenario view tabs | PASS | True
+mobile | impact view tabs | PASS | True
+mobile | architecture module details | PASS | True
+mobile | settings update | PASS | 110
+mobile | settings load after fresh boot | PASS | ocean
+mobile | horizontal overflow | PASS | 390
+mobile | more menu | PASS | True
+mobile | no JS page errors | PASS | True
+small | pattern count | PASS | 19
+small | two mobile inline accordions | PASS | 2
+small | one line log css | PASS | 32px
+small | NIBP 2 sec cycle | PASS | MANUAL
+small | history modal | PASS | True
+small | lab timer tab | PASS | True
+small | scenario view tabs | PASS | True
+small | impact view tabs | PASS | True
+small | architecture module details | PASS | True
+small | settings update | PASS | 110
+small | settings load after fresh boot | PASS | ocean
+small | horizontal overflow | PASS | 344
+small | no JS page errors | PASS | True
