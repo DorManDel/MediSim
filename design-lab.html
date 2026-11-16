@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MedSim · Visual Layout Lab</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/grapesjs@0.22.13/dist/css/grapes.min.css">
+<style>
+:root{color-scheme:dark;--bg:#101523;--panel:#20283b;--border:#3c4b65;--muted:#aab6d3;--txt:#f7f7fd;--accent:#c4a0ff}*{box-sizing:border-box}body{margin:0;color:var(--txt);background:var(--bg);font:14px system-ui,Segoe UI,Arial;overflow:hidden}button,select,input{font:inherit}button,select{background:#303c59;border:1px solid #5c698c;color:#fff;border-radius:9px;padding:8px 10px;cursor:pointer}button:hover{background:#485576}button.primary{background:#6348a5;border-color:#a58af2}button:focus-visible,select:focus-visible{outline:3px solid #ffd77d}header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 14px;background:#192137;border-bottom:1px solid var(--border);min-height:65px}header a{color:#ded0ff;text-decoration:none;margin-right:10px}header strong{font-size:15px;white-space:nowrap}header small{color:var(--muted)}header .grow{flex:1}.select{min-width:100px}.shell{height:calc(100dvh - 65px);display:grid;grid-template-columns:1fr}.status{color:#eadba0;font-size:12px;max-width:370px}#gjs{height:100%;border:0;background:#dce4f0}.fallback{position:absolute;inset:80px 30px 30px;border:1px dashed #667492;border-radius:18px;display:grid;place-items:center;background:#182137;text-align:center;padding:30px}.fallback[hidden]{display:none}.fallback a{color:#cdbaff}.gjs-one-bg{background-color:#1c2436}.gjs-two-color{color:#e5e9f6}.gjs-three-bg{background-color:#344360}.gjs-four-color,.gjs-color-warn{color:#d4b3ff}.gjs-pn-buttons{display:flex;flex-wrap:wrap}.gjs-blocks-c{padding:4px}.gjs-block{min-height:66px}.gjs-mdl-dialog{color:#1b1f28}input[type=file]{display:none}@media(max-width:900px){header{min-height:100px} .shell{height:calc(100dvh - 100px)}header strong{width:100%}header small{display:none}}
+</style></head><body>
+<header>
+<strong>◈ MedSim · Visual Layout Lab <small>GrapesJS experiment — local draft</small></strong>
+<a href="./index.html">← Toolkit</a>
+<select id="pages" class="select" title="Page"></select><button id="new-page" title="Add page">+ Page</button>
+<button id="desktop">Desktop</button><button id="tablet">Tablet</button><button id="mobile">Mobile</button>
+<button id="undo">↶</button><button id="redo">↷</button><button id="preview">Preview</button>
+<span class="grow"></span><button id="save" class="primary">Save Draft</button><button id="backup">Export JSON</button>
+<label for="import" style="cursor:pointer;background:#303c59;border:1px solid #5c698c;border-radius:9px;padding:8px 10px">Import</label><input id="import" type="file" accept=".json,application/json">
+<button id="export">Export HTML</button><span class="status" id="state">Loading editor…</span>
+</header>
+<main class="shell"><div id="gjs"></div><div class="fallback" id="fallback" hidden><div><h2>Visual editor could not load</h2><p>GrapesJS needs access to the pinned external CDN. The main Toolkit Studio still works locally without it.</p><p>For restricted work computers, bundle approved vendor assets into the repository instead of depending on a CDN.</p><a href="./index.html">Open the offline-friendly Toolkit editor</a></div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/grapesjs@0.22.13/dist/grapes.min.js" onerror="document.getElementById('fallback').hidden=false;document.getElementById('state').textContent='CDN unavailable'"></script>
+<script>
+/* Static prototype only; never store auth tokens here. Project JSON is the canonical edit format. */
+(function(){
+ const el=id=>document.getElementById(id),msg=s=>el('state').textContent=s;let ed,db,ready=false;
+ const schema='medsim.layout.v1';
+ const openDb=()=>new Promise((resolve,reject)=>{if(!indexedDB)return reject(Error('No IndexedDB'));const r=indexedDB.open('medsim-design-lab',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('drafts'))r.result.createObjectStore('drafts')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+ const dbRead=key=>new Promise((resolve,reject)=>{const r=db.transaction('drafts','readonly').objectStore('drafts').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+ const dbWrite=(key,val)=>new Promise((resolve,reject)=>{const t=db.transaction('drafts','readwrite');t.objectStore('drafts').put(val,key);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});
+ const saveFile=(name,blob)=>{const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
+ function block(id,label,cat,content){ed.BlockManager.add(id,{label,category:cat,content});}
+ function configure(){
+  block('ms-hero','Hero banner','MedSim',`<section class="container py-5 text-center"><span class="badge text-bg-primary">MedSim Pattern</span><h1 class="display-5 fw-bold mt-3">Reusable simulation workflows</h1><p class="lead">Explain the why, steps, and evidence.</p><a class="btn btn-primary" href="#patterns">Explore patterns</a></section>`);
+  block('ms-step','Procedure step','MedSim',`<section class="container my-3"><div class="card shadow-sm"><div class="card-body"><span class="badge text-bg-info">Step 01</span><h3 class="h5 mt-2">Trigger event</h3><p>Action → Delay → Expected response</p></div></div></section>`);
+  block('ms-evidence','Evidence / Impact','MedSim',`<div class="container my-3"><div class="alert alert-success"><h3 class="h5">Before / After</h3><p>Document baseline actions, repetitions and observed outcome.</p></div></div>`);
+  block('ms-pea','PEA safety note','MedSim',`<div class="container my-3"><div class="alert alert-warning"><h3 class="h5">PEA Transition Guard</h3><p>When exiting PEA, set the intended PEA state explicitly. Verify in the simulator.</p></div></div>`);
+  block('ms-grid','Two-column layout','Bootstrap',`<section class="container my-4"><div class="row g-3"><div class="col-md-6"><div class="card"><div class="card-body">Left column</div></div></div><div class="col-md-6"><div class="card"><div class="card-body">Right column</div></div></div></div></section>`);
+  block('ms-alert','Alert','Bootstrap',`<div class="container"><div class="alert alert-info" role="alert">Insert a useful note.</div></div>`);
+  block('ms-card','Card','Bootstrap',`<div class="card"><div class="card-body"><h4 class="card-title">Card title</h4><p class="card-text">Card text</p></div></div>`);
+  block('ms-button','Button','Bootstrap',`<a class="btn btn-primary" href="#">Button</a>`);
+  block('ms-image','Image / Screenshot','Basics',`<img class="img-fluid rounded" alt="Simulation UI screenshot placeholder" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='240'%3E%3Crect width='100%25' height='100%25' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23475669' font-size='24'%3EScreenshot%20placeholder%3C/text%3E%3C/svg%3E">`);
+  ed.AssetManager.getConfig().uploadFile=ev=>{const files=ev.dataTransfer?.files||ev.target?.files;if(!files)return;for(const file of files){if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)||file.size>1024*1024){alert('Use PNG/JPEG/WebP/GIF under 1 MB. Large images belong in the content asset pipeline.');continue}const reader=new FileReader();reader.onload=()=>ed.AssetManager.add({src:reader.result,name:file.name});reader.readAsDataURL(file)}};
+  ed.on('update',()=>msg('● Unsaved changes · Draft is local until saved'));
+ }
+ function refreshPages(){const select=el('pages');const pages=ed.Pages.getAll();select.replaceChildren();for(const page of pages){const option=document.createElement('option');option.value=page.getId();option.textContent=page.get('name')||page.getId();select.append(option)}select.value=ed.Pages.getSelected()?.getId()||''}
+ function wire(){
+  el('desktop').onclick=()=>ed.setDevice('Desktop');el('tablet').onclick=()=>ed.setDevice('Tablet');el('mobile').onclick=()=>ed.setDevice('Mobile');
+  el('undo').onclick=()=>ed.UndoManager.undo();el('redo').onclick=()=>ed.UndoManager.redo();el('preview').onclick=()=>ed.runCommand('core:preview');
+  el('new-page').onclick=()=>{const name=prompt('New page name');if(!name)return;const id='page-'+Date.now();ed.Pages.add({id,name:name.slice(0,60),component:'<main><section class="container py-5"><h1>New page</h1><p>Drag blocks from the side panel.</p></section></main>'});ed.Pages.select(id);refreshPages()};
+  el('pages').onchange=e=>{ed.Pages.select(e.target.value);refreshPages()};ed.on('page:select',refreshPages);
+  el('save').onclick=async()=>{try{if(!db)throw Error('Browser local storage unavailable');await dbWrite('layout',{schema,updatedAt:new Date().toISOString(),data:ed.getProjectData()});msg('✓ Saved to this browser · not published')}catch(e){alert(e.message)}};
+  el('backup').onclick=()=>saveFile('medsim-layout-project.json',new Blob([JSON.stringify({schema,createdAt:new Date().toISOString(),data:ed.getProjectData()},null,2)],{type:'application/json'}));
+  el('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>8*1024*1024)throw Error('File too large');const doc=JSON.parse(await file.text());if(doc.schema!==schema||!doc.data||typeof doc.data!=='object')throw Error('Not a MedSim Layout backup');if(!confirm('Replace this visual draft?'))return;ed.loadProjectData(doc.data);refreshPages();msg('✓ Project loaded locally (not yet published)')}catch(err){alert(err.message)}e.target.value=''};
+  el('export').onclick=()=>{const css=ed.getCss(),html=ed.getHtml(),full='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"><title>MedSim Design Export</title><style>'+css+'</style></head><body>'+html+'</body></html>';saveFile('medsim-layout-preview.html',new Blob([full],{type:'text/html'}));msg('✓ Exported HTML preview · JSON is required for re-editing')};
+ }
+ async function boot(){if(!window.grapesjs){el('fallback').hidden=false;msg('CDN unavailable');return;}
+  ed=grapesjs.init({container:'#gjs',height:'100%',width:'auto',fromElement:false,storageManager:false,noticeOnUnload:false,canvas:{styles:['https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css']},deviceManager:{devices:[{name:'Desktop',width:''},{name:'Tablet',width:'768px',widthMedia:'992px'},{name:'Mobile',width:'390px',widthMedia:'576px'}]},components:`<main><section class="container py-5"><span class="badge text-bg-primary">MedSim Toolkit</span><h1 class="display-5 fw-bold mt-3">Visual Pattern Pages</h1><p class="lead">Drag, style and assemble Bootstrap components with GrapesJS.</p></section><section class="container my-4"><div class="row g-3"><div class="col-md-6"><div class="alert alert-info">NIBP: Auto → 2s → Manual</div></div><div class="col-md-6"><div class="alert alert-warning">PEA: Set exit state explicitly</div></div></div></section></main>`});
+  configure();wire();try{db=await openDb();const stored=await dbRead('layout');if(stored?.schema===schema){ed.loadProjectData(stored.data);msg('✓ Loaded local draft')}else msg('● Starter layout · save when ready')}catch(err){msg('⚠ Browser storage unavailable · use Export JSON')};refreshPages();ready=true;
+ }
+ boot().catch(e=>{el('fallback').hidden=false;msg('Editor error: '+e.message)});
+})();
+</script></body></html>
