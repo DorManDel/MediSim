@@ -1,4 +1,15 @@
-# MedSim Toolkit v0.4 — Visual Authoring Prototype
+## v0.5 usability redesign (2026-11-16)
+
+- Mobile bottom navigation features five primary areas; other sections are under the More menu.
+- Pattern cards on desktop open a modal. Mobile supports **multiple independent expanded cards**, each inline under its card with steps, checks, and saved notes.
+- Playground provides a one-line latest event log with an optional full history dialog, a prominent mock status display, and compact lab tabs.
+- Impact, Scenario, and Architecture are split into focused tab views to avoid endless scrolling.
+- Settings change theme accent, density, font size, desktop grid columns, animations, site brand text, home intro, and preferred home route; localStorage drafts and JSON export, not site-wide publishing.
+- No changes to native SimDesigner/LLEAP integration. This remains an educational browser simulator.
+- Tested via headless Chromium with inline HTML in 1380px / 390px / 344px viewports; browser navigation to local URLs was blocked in this test environment. See QA_RESULTS.txt for the tested behaviors.
+- Desktop GrapesJS lab still requires an approved CDN or vendored dependency. Real Github authentication / hosted persistent editing is NOT yet implemented.
+
+# MedSim Toolkit v0.5 — Mobile-first UX + Visual Authoring
 
 A static, local-first documentation and design prototype for reusable Laerdal SimDesigner / LLEAP simulation workflows. No simulator connection, remote write access, account system, or production publishing endpoint has been implemented.
 
