@@ -1,0 +1,50 @@
+{
+  "schema": "medsim.studio.published.v1",
+  "publishedAt": null,
+  "blocks": [
+    {
+      "id": "nibp",
+      "kind": "text",
+      "title": "NIBP Quick Measure",
+      "text": "**Measure BP** → NIBP Auto → Delay 2 seconds → NIBP Manual.\\n\\nReported working; verify on a second scenario.",
+      "width": 6,
+      "status": "reported",
+      "source": "Instructor-created workflow; colleague showed events in Trends.",
+      "asset": null,
+      "alt": ""
+    },
+    {
+      "id": "pea",
+      "kind": "warning",
+      "title": "PEA Transition Guard",
+      "text": "When exiting PEA: explicitly set **No PEA**, not **No change**. Verify monitor and pulse states in LLEAP.",
+      "width": 6,
+      "status": "reported",
+      "source": "Field observation; device/version verification required",
+      "asset": null,
+      "alt": ""
+    },
+    {
+      "id": "media",
+      "kind": "text",
+      "title": "Media: Play / Hide / Stop",
+      "text": "Immediately starts display/playback. Hidden hides visual content but is not a guaranteed audio stop. Test audio stop separately.",
+      "width": 8,
+      "status": "documented",
+      "source": "SimDesigner documentation (verify edition and current release)",
+      "asset": null,
+      "alt": ""
+    },
+    {
+      "id": "evidence",
+      "kind": "impact",
+      "title": "Engineering impact",
+      "text": "Record baseline clicks per cycle, automated clicks after change, number of cycles, failures, and instructor workload. Avoid translating clicks into staff savings without observations.",
+      "width": 4,
+      "status": "draft",
+      "source": "Measurement plan; no controlled study yet",
+      "asset": null,
+      "alt": ""
+    }
+  ]
+}

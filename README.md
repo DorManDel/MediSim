@@ -1,18 +1,53 @@
-# MediSim
+## v0.5 usability redesign (2026-11-16)
 
-A reusable simulation workflow pattern library and visual documentation studio for SimDesigner / LLEAP.
+- Mobile bottom navigation features five primary areas; other sections are under the More menu.
+- Pattern cards on desktop open a modal. Mobile supports **multiple independent expanded cards**, each inline under its card with steps, checks, and saved notes.
+- Playground provides a one-line latest event log with an optional full history dialog, a prominent mock status display, and compact lab tabs.
+- Impact, Scenario, and Architecture are split into focused tab views to avoid endless scrolling.
+- Settings change theme accent, density, font size, desktop grid columns, animations, site brand text, home intro, and preferred home route; localStorage drafts and JSON export, not site-wide publishing.
+- No changes to native SimDesigner/LLEAP integration. This remains an educational browser simulator.
+- Tested via headless Chromium with inline HTML in 1380px / 390px / 344px viewports; browser navigation to local URLs was blocked in this test environment. See QA_RESULTS.txt for the tested behaviors.
+- Desktop GrapesJS lab still requires an approved CDN or vendored dependency. Real Github authentication / hosted persistent editing is NOT yet implemented.
 
-## Status
+# MedSim Toolkit v0.5 — Mobile-first UX + Visual Authoring
 
-Initial repository. The browser-first prototype is being reviewed on a feature branch; it is **not** yet a production simulator integration or a published editing backend.
+A static, local-first documentation and design prototype for reusable Laerdal SimDesigner / LLEAP simulation workflows. No simulator connection, remote write access, account system, or production publishing endpoint has been implemented.
 
-**Security:** Do not commit patient-identifying data, confidential institution information, or unauthorized clinical screenshots. Never commit GitHub tokens or credentials.
+## Open
 
-## Proposed architecture
+- `index.html`: knowledge hub, Scenario Logic demo, field evidence, reusable patterns, and **Studio** in the left navigation.
+- `design-lab.html`: experimental GrapesJS drag-and-drop editor (requires access to pinned GrapesJS and Bootstrap CDN assets). A network connection is required for this page unless vendor assets are bundled.
+- `content/knowledge.json`: versioned example public content loaded when served via HTTP(S), overridden by local draft in the same browser.
 
-- Static public knowledge site
-- Local-first editor using IndexedDB and exportable images
-- Optional GrapesJS design experiment
-- Future protected authoring API (Cloudflare Access + GitHub App) that opens draft Pull Requests, with mobile approval before publishing
+Serve locally with `python -m http.server 8000`, then visit `http://localhost:8000`. Opening `index.html` directly also works for the local sample, though fetching `content/knowledge.json` requires HTTP(S).
 
-See the prototype pull request for implementation and caveats.
+## How editing works
+
+1. Open Studio → Edit Mode to add text, note, screenshot, warning or impact blocks.
+2. Select a block to edit Markdown, status, source, width, or screenshot. Reorder via drag/drop (desktop) or up/down controls (mobile).
+3. Switch Desktop/Tablet/Mobile preview; it changes the content-stage width and uses container queries.
+4. Your private local draft and pictures are saved in IndexedDB if browser policy allows. **Save Draft is local to the current browser/profile**; it is not a remote save or an authorization system.
+5. `JSON + images` exports a backup including images. Import restores that backup in a browser.
+6. `Preset Code` exports a compressed/copyable text-and-layout schema, without binary media. Its 8-hex FNV check detects accidental damage; it is not a security signature.
+7. `Publish ZIP` exports `content/knowledge.json` and `assets/*` for manual commit to a hosting repository. The browser cannot safely write to GitHub using an exposed credential.
+8. In `design-lab.html`, experiment with free drag/resize and Bootstrap components. `Export JSON` contains the native GrapesJS editing project, whereas HTML is a preview/export artifact.
+
+## Planned production workflow
+
+**Public GitHub Pages/Cloudflare Pages** → **owner-only Cloudflare Access-protected Worker** → **GitHub App installation token stored only in Worker secrets** → **draft Pull Request** → **CI content and URL validation** → **owner approval on mobile** → **merge/deploy**.
+
+- Cloudflare Access must validate every write request, not just hide Edit Mode in the frontend. Worker must enforce editor identity, CSRF defenses, file type/size limits, allowed destination paths, rate limits, and audit logs.
+- Prefer GitHub App short-lived installation tokens rather than long-lived personal access tokens. Never ship a token in JavaScript, localStorage or a public repository.
+- The work PC only needs access to the public site and protected publishing API; it need not open GitHub itself. Workstation and organization policies must permit this workflow.
+- No login, GitHub push, CI-based publish or phone approval UI is live in v0.4.
+- Because the repository is public, **never publish real patient data, internal institution details, or copyrighted clinical screenshots without permission and redaction**.
+
+## Evidence status
+
+`Reported working` means the user described successful field behavior; `Documented` means a source was reviewed; `Verified in LLEAP` must be selected only after actual retesting with simulator model, software version and evidence. The browser mocks are not simulator verification.
+
+## Dependency policy
+
+The main toolkit works without external JavaScript libraries. The optional design lab uses GrapesJS open-source v0.22.13 and Bootstrap v5.3.3 from CDN; for restricted workplace browsers, self-host pinned vendor files with license notices after IT/security approval.
+
+For WebForge, isolate `design-lab.html` as an experimental rendering engine, but keep the medical pattern schema and evidence workflow separate from the generic editor core.
